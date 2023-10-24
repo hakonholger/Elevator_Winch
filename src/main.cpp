@@ -12,6 +12,8 @@ long prevT = 0;
 float eprev = 0;
 float eintegral = 0;
 
+void driveMotor(int speed);
+void readEncoder();
 
 void setup() {
   Serial.begin(9600);
