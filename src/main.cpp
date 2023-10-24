@@ -31,9 +31,9 @@ int target = 3000; //Settpunkt for DC-Motor
 
 // PID parameters
   float kp = 1;
-  float kd = 0;
-  float ki = 0;
-  int margin = 10;
+  float kd = 0.001;
+  float ki = 0.001;
+  int margin = 1;
 
   //compute time difference
   long currT = micros();
