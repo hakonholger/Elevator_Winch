@@ -1,19 +1,12 @@
-#include "Door.h"
 #include <dac.h>
 
-int Door::doorIsOpen = 0;
-
-Door::Door(int A, int A_phase, int B, int B_phase, int stepsPerRev, int speed, bool doorIsOpen){
-
-}
-
-  //int A = 69; // pin connected to enable A
-  //int A_phase = 68; // pin connected to phase A
-  //int B = 67; // pin connected to enable B
-  //int B_phase = 66; // pin connected to phase B
-  //int stepsPerRev = 200; // defining steps per revolution
-  //int speed = 5000;
-  //bool doorIsOpen = 0;
+  int A = 69; // pin connected to enable A
+  int A_phase = 68; // pin connected to phase A
+  int B = 67; // pin connected to enable B
+  int B_phase = 66; // pin connected to phase B
+  int stepsPerRev = 200; // defining steps per revolution
+  int speed = 5000;
+  bool doorIsOpen = 0;
 
 void openDoor();
 void closeDoor();
