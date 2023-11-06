@@ -1,19 +1,21 @@
+//Email til filippo: filippo.sanfilippo@ntnu.no
+
 #include <Arduino.h>
 #include "MotorDriver.h"
-#include "PIDController.h"
+#include "PID.h"
 
 MotorDriver motor(7, 6, 5, 20, 21);
-PIDController pid(1, 0.001, 0.001, 3000);
-
-void readEncoder();
+PID pid(1, 0.001, 0.001, 3000);
 
 void setup() {
   Serial.begin(9600);
 }
 
-void loop() {
-  float controlSignal = pid.compute(MotorDriver::getPos());
-  motor.driveMotor(-controlSignal);
+void loop() { 
+  
+  double controlSignal = pid.compute(MotorDriver::getPos());
+  motor.driveMotor(controlSignal);
+
 
   Serial.print("Posisjon: "); Serial.print(MotorDriver::getPos());
   Serial.print(" Setpunkt: 3000");
