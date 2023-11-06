@@ -2,14 +2,15 @@
 #define PID_h
 
 #include <Arduino.h>
+#include "MotorDriver.h"
 
 class PID {
+    MotorDriver &motor;
 public:
-    PID(double kp, double ki, double kd, double setPoint);
-    double compute(int actualPosition);
+    PID(double kp, double ki, double kd, MotorDriver &motorDriver);
+    void compute(double setPoint);
 private:
-    double _kp, _ki, _kd;
-    double _setPoint; 
+    double _kp, _ki, _kd; 
     
     double e_int; 
     double e_previous;

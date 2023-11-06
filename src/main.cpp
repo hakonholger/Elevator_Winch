@@ -3,24 +3,43 @@
 #include <Arduino.h>
 #include "MotorDriver.h"
 #include "PID.h"
+#include "functions.h"
+#include "Door.h"
+#include "pins.h"
+#include "dac.h"
+
+
 
 MotorDriver motor(7, 6, 5, 20, 21);
-PID pid(1, 0.001, 0.001, 3000);
+PID pid(1, 0.1, 0.1, motor);
+
+  // Define pins for stepper
+  int A = 69; 
+  int A_phase = 68; 
+  int B = 67; 
+  int B_phase = 66;
+  int stepsPerRev = 200;
+  int speed = 5000;
+  bool doorIsOpen = 0;
 
 void setup() {
   Serial.begin(9600);
+
+    // set pins as output
+  pinMode(A, OUTPUT);
+  pinMode(B, OUTPUT);
+  pinMode(A_phase, OUTPUT); 
+  pinMode(B_phase, OUTPUT);
+
+  dac_init();
+  set_dac(4095,4095); //1A per motor phase
 }
 
 void loop() { 
-  
-  double controlSignal = pid.compute(MotorDriver::getPos());
-  motor.driveMotor(controlSignal);
 
 
-  Serial.print("Posisjon: "); Serial.print(MotorDriver::getPos());
-  Serial.print(" Setpunkt: 3000");
-  Serial.print(" Pådrag: "); Serial.println(-controlSignal);
+startElevator(pid);
 
-  delay(10);
+
 }
 

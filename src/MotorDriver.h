@@ -2,6 +2,7 @@
 #define MotorDriver_h
 
 #include <Arduino.h>
+#include "MotorDriver.h"
 
 
 class MotorDriver {
