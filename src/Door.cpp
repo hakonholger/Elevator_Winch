@@ -1,6 +1,10 @@
 #include "Door.h"
-#include "pins.h"
+#include "globalPinsAndVariables.h"
 #include <dac.h>
+
+  int stepsPerRev = 200;
+  int speed = 5000;
+  bool doorIsOpen = false;
 
 
 void openDoor() {
@@ -59,6 +63,8 @@ void openDoor() {
     digitalWrite(B, LOW);
     digitalWrite(B_phase, HIGH);
     delayMicroseconds (speed);
+
+    doorIsOpen = true;
   }
 }
 
@@ -113,5 +119,7 @@ void closeDoor() {
     digitalWrite(B, HIGH);
     digitalWrite(B_phase, HIGH);
     delayMicroseconds (speed);
+
+    doorIsOpen = false;
   } 
 }

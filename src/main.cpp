@@ -5,22 +5,18 @@
 #include "PID.h"
 #include "functions.h"
 #include "Door.h"
-#include "pins.h"
+#include "globalPinsAndVariables.h"
 #include "dac.h"
 
 
-
 MotorDriver motor(7, 6, 5, 20, 21);
-PID pid(1, 0.1, 0.1, motor);
+PID pid(1, 0.001, 0.4, motor);
 
   // Define pins for stepper
   int A = 69; 
   int A_phase = 68; 
   int B = 67; 
   int B_phase = 66;
-  int stepsPerRev = 200;
-  int speed = 5000;
-  bool doorIsOpen = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -31,14 +27,15 @@ void setup() {
   pinMode(A_phase, OUTPUT); 
   pinMode(B_phase, OUTPUT);
 
+  //1A per motor phase
   dac_init();
-  set_dac(4095,4095); //1A per motor phase
+  set_dac(4095,4095);
 }
 
 void loop() { 
 
 
-startElevator(pid);
+startElevator();
 
 
 }

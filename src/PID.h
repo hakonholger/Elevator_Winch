@@ -16,6 +16,8 @@ private:
     double e_previous;
     double current_time;
     double previous_time;
+    double dt;
+    double elapsed_time;
 };
 
 #endif
