@@ -15,6 +15,7 @@ void currentFloor();
 void moveElevator();
 void removeFromQueue(int queueArrey[]);
 void Idle();
+void setLed();
 
 
 

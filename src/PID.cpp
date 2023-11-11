@@ -18,7 +18,7 @@ void PID::compute(double setPoint) {
 
     elapsed_time = (current_time - previous_time); 
 
-    //Waiting foor loop time:
+    // Venter til neste intervall:
     while (!(elapsed_time >= dt)) {
       current_time = millis();                             
       elapsed_time = (float)(current_time - previous_time);
@@ -28,7 +28,7 @@ void PID::compute(double setPoint) {
     double e_der = (e - e_previous)/dt;
     e_int += e * dt; 
 
-    // Wind-up Dirty-Trick 
+    // kvitter oss med "Wind-Up"
     if(abs(e) >= 5) {
       e_int = 0;
     }
@@ -38,7 +38,7 @@ void PID::compute(double setPoint) {
     e_previous = e;
     previous_time = current_time;
 
-    // Constrains
+    // Setter maks PWM til 50, så motor ikke går så fort...
       if (u < -50) {
     u = -50;
     } else if (u > 50) {
@@ -46,5 +46,6 @@ void PID::compute(double setPoint) {
     }
 
     motor.driveMotor(u);
-    Serial.print(actualPosition); Serial.print("  Set: "); Serial.println(setPoint*1000);
+    delay(20);
+    //  Serial.print(actualPosition); Serial.print("  Set: "); Serial.println(setPoint*1000);
 }

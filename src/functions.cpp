@@ -68,7 +68,9 @@ void queueUp(int floor) {
     }
     if (floor < queueUpArray[i] || queueUpArray[i] == 0) {
       for (int j = numFloor - 1; j >= i; j--) {
+        if(j < numFloor -1){
         queueUpArray[j + 1] = queueUpArray[j];
+        }
       }
       queueUpArray[i] = floor; 
       break;
@@ -86,6 +88,7 @@ void queueDown(int floor) {
       queueDownArray[j] = queueDownArray[j - 1];
     }
     queueDownArray[i] = floor;
+    break;
     }
   }
 }
@@ -103,27 +106,29 @@ void removeFromQueue(int queueArrey[]){
 }
 
 void queue(String inputString){
-// Pressed at floor 1:
+// Knapp på etasje 1:
 if(inputString == "u1"){
   queueDown(1);
 }
-// Pressed at floor 2:
+// Knapp på etasje 2:
 if(inputString == "u2"){
   queueUp(2);
 }
 if(inputString == "d2"){
   queueDown(2);
 }
-// Pressed at floor 3:
+// Knapp på etasje 3:
 if(inputString == "d3"){
   queueUp(3);
 }
-// Pressed inside elevator:
+// Knapper inne i heis:
 if(inputString == "1" && current_Floor > 1){
 queueDown(1);
 }
 if(inputString == "1" && current_Floor == 1){
-openDoor();
+  if(!doorIsOpen){
+  openDoor();
+  }
 }
 if(inputString == "2" && current_Floor < 2){
 queueUp(2);
@@ -132,13 +137,17 @@ if(inputString == "2" && current_Floor > 2){
 queueDown(2);
 }
 if(inputString == "2" && current_Floor == 2){
-openDoor();
+  if(!doorIsOpen){
+  openDoor();
+  }
 }
 if(inputString == "3" && current_Floor < 3){
 queueUp(3);
 }
 if(inputString == "3" && current_Floor == 3){
-openDoor();
+  if(!doorIsOpen){
+  openDoor();
+  }
 }
 }
 
@@ -199,5 +208,23 @@ void moveElevator() {
       removeFromQueue(queueDownArray);
     }}
   }
+}
+}
+
+void setLed(){
+  digitalWrite(led1, 0);
+  digitalWrite(led2, 0);
+  digitalWrite(led3, 0);
+
+switch(current_Floor){
+  case 1:
+    digitalWrite(led1, 1);
+    break;
+  case 2:
+    digitalWrite(led2, 1);
+    break;
+  case 3:
+    digitalWrite(led3, 1);
+    break;
 }
 }

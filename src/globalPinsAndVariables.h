@@ -1,4 +1,3 @@
-// pins.h
 #ifndef globalPinsAndVariables_h
 #define globalPinsAndVariables_h
 
@@ -10,6 +9,10 @@ extern int A;
 extern int A_phase;
 extern int B;
 extern int B_phase;
+   //LED
+extern int led1;
+extern int led2;
+extern int led3;
 
 
 extern PID pid;
