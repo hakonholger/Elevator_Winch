@@ -123,3 +123,7 @@ void closeDoor() {
     doorIsOpen = false;
   } 
 }
+
+void halfDoor(){
+  
+}

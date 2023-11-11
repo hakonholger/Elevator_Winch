@@ -6,16 +6,16 @@ PID::PID(double kp, double ki, double kd,
     : 
     motor(motorDriver),
     _kp(kp), _ki(ki), _kd(kd),
-    e_int(0), e_previous(0), previous_time(0),dt(10), elapsed_time(0) {}
+    e_int(0), e_previous(0), previous_time(0), dt(10), elapsed_time(0) {}
 
 
 void PID::compute(double setPoint) {
 
-    int actualPosition = motor.getPos();
+    dt = 10;
+    
+    double actualPosition = motor.getPos();
     double current_time = millis();
 
-
-    double dt = (current_time - previous_time);
     elapsed_time = (current_time - previous_time); 
 
     //Waiting foor loop time:
@@ -24,16 +24,16 @@ void PID::compute(double setPoint) {
       elapsed_time = (float)(current_time - previous_time);
     }
  
-    double e = setPoint - actualPosition;
+    double e = setPoint*1000 - actualPosition;
     double e_der = (e - e_previous)/dt;
     e_int += e * dt; 
 
-    double u = _kp*e + _ki*e_int + _kd*e_der ;
-
-    if(abs(e) >= 5) {
+    // Wind-up Dirty-Trick 
+    if(abs(e) >= 50) {
       e_int = 0;
-      e_der = 0;
     }
+
+    double u = _kp*e + _ki*e_int + _kd*e_der ;
 
     e_previous = e;
     previous_time = current_time;
@@ -46,8 +46,5 @@ void PID::compute(double setPoint) {
     }
 
     motor.driveMotor(u);
-
-  Serial.print("Posisjon: "); Serial.print(actualPosition);
-  Serial.print(" Setpunkt: "); Serial.print(setPoint);
-  Serial.print(" Pådrag: "); Serial.println(u);
+    Serial.print(actualPosition); Serial.print("  Set: "); Serial.println(setPoint*1000);
 }

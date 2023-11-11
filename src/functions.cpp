@@ -64,8 +64,11 @@ void buttons(){
       inputString.trim();
 
       // Sjekker om input er gyldig:
-      if (inputString == "u1" || inputString == "u2" || inputString == "d2" || inputString == "3d" || 
-          (inputString.toInt() > 0 && inputString.toInt() <= 5)) 
+      if (inputString == "u1" || 
+          inputString == "u2" || 
+          inputString == "d2" || 
+          inputString == "3d" || 
+          (inputString.toInt() > 0 && inputString.toInt() <= 3)) 
       {
         Serial.print("Command received: ");
         Serial.println(inputString);
@@ -100,7 +103,7 @@ void direction() {
     bool downEmpty = isQueueEmpty(queueDownArray, numFloor);
     
     // Sett noQueue basert på om begge køene er tomme
-    bool noQueue = upEmpty && downEmpty;
+    noQueue = upEmpty && downEmpty;
 
     if(noQueue){
       lastActivityTime = millis();
@@ -134,6 +137,21 @@ void queueUp(int floor) {
   }
 }
 
+void queueDown(int floor) {
+  for (int i = 0; i < numFloor; i++) {
+    if (floor == queueDownArray[i]) { 
+      return;
+    }
+    if (floor > queueDownArray[i] || queueDownArray[i] == 0) {
+      for (int j = numFloor - 1; j > i; j--) {
+      queueDownArray[j] = queueDownArray[j - 1];
+    }
+    queueDownArray[i] = floor;
+    }
+  }
+}
+
+
 void removeFromQueueUp(){
   if (queueUpArray[0] == 0) {
     return;
@@ -142,30 +160,21 @@ void removeFromQueueUp(){
   for (int i = 0; i < numFloor - 1; i++) {
     queueUpArray[i] = queueUpArray[i + 1];
   }
-
   queueUpArray[numFloor - 1] = 0;
   }
 }
 
 void removeFromQueueDown(){
-  
-}
-
-void queueDown(int floor) {
-  int i;
-  for (i = 0; i < numFloor; i++) {
-    if (queueDownArray[i] == 0 || floor > queueDownArray[i]) {
-      break;
-    }
+    if (queueDownArray[0] == 0) {
+    return;
   }
-  if (i < numFloor) {
-    for (int j = numFloor - 1; j > i; j--) {
-      queueDownArray[j] = queueDownArray[j - 1];
-    }
-    queueDownArray[i] = floor;
+  else{
+  for (int i = 0; i < numFloor - 1; i++) {
+    queueDownArray[i] = queueDownArray[i + 1];
+  }
+  queueDownArray[numFloor - 1] = 0;
   }
 }
-
 
 void queue(String inputString){
 
@@ -222,7 +231,6 @@ if(pos < 2010 && pos > 1990){
 if(pos < 3010 && pos > 2990){
   current_Floor = 3;
 }
-Serial.println(pos);
 }
 
 void Idle(){
@@ -238,26 +246,29 @@ void Idle(){
 
 //fiks her noe 
 void moveElevator() {
+  if(!noQueue){
   if (dir == true) { 
-    int set = queueUpArray[0] * 1000;
+    if(queueUpArray[0] != 0){
+    int set = queueUpArray[0];
     pid.compute(set);
-    set = set/1000;
     currentFloor();
     if (current_Floor == set) {
       if(!doorIsOpen){
       openDoor();
       }
       removeFromQueueUp();
-    }
+    }}
   } 
   else if (dir == false) {
-      int set = queueDownArray[0] * 1000;
+    if(queueDownArray[0] != 0){
+      int set = queueDownArray[0];
       pid.compute(set);
-      set = set/1000;
     if (current_Floor == set) {
       if(!doorIsOpen){
       openDoor();
       }
-    }
+      removeFromQueueDown();
+    }}
   }
+}
 }

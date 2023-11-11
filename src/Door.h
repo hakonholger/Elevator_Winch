@@ -6,5 +6,7 @@
 void openDoor();
 void closeDoor();
 
+void halfDoor();
+
 
 #endif
