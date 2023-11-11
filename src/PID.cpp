@@ -29,7 +29,7 @@ void PID::compute(double setPoint) {
     e_int += e * dt; 
 
     // Wind-up Dirty-Trick 
-    if(abs(e) >= 50) {
+    if(abs(e) >= 5) {
       e_int = 0;
     }
 
@@ -39,10 +39,10 @@ void PID::compute(double setPoint) {
     previous_time = current_time;
 
     // Constrains
-      if (u < -255) {
-    u = -255;
-    } else if (u > 255) {
-    u = 255;
+      if (u < -50) {
+    u = -50;
+    } else if (u > 50) {
+    u = 50;
     }
 
     motor.driveMotor(u);

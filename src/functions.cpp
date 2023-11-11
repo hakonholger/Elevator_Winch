@@ -4,82 +4,31 @@
 #include "globalPinsAndVariables.h"
 #include "Door.h"
 
-// Arrey for køsystem
-const int numFloor = 3;
-int queueUpArray[numFloor] = {0};
-int queueDownArray[numFloor] = {0};
-int current_Floor;
-unsigned long lastActivityTime = 0;
-
-
-
-
-// Bolsk verdi for retning av heis
-bool dir = true;
-bool noQueue = true;
-
-unsigned long lastPrintTime = 0;
-const unsigned long printInterval = 5000; // 5 sekunder i millisekunder
-
-void startElevator(){
-
-  buttons();
-  direction();
-
-
-
-unsigned long currentTime = millis(); // Hent gjeldende tid
-  // Sjekk om det har gått 5 sekunder siden siste utskrift
-  if (currentTime - lastPrintTime >= printInterval) {
-    lastPrintTime = currentTime; // Oppdater siste utskriftstidspunkt
-
-    // Print kø for oppover
-    Serial.println("Queue Up:");
-    for (int i = 0; i < numFloor; i++) {
-      Serial.print(queueUpArray[i]);
-      Serial.print(" ");
-    }
-    Serial.println(); // Ny linje etter utskrift av kø
-
-    // Print kø for nedover
-    Serial.println("Queue Down:");
-    for (int i = 0; i < numFloor; i++) {
-      Serial.print(queueDownArray[i]);
-      Serial.print(" ");
-    }
-    Serial.println(); // Ny linje etter utskrift av kø
-    Serial.println(current_Floor);
-  }
-}
 
 void buttons(){
-  // Oppretter string for inndata
+  // Inndata string:
   static String inputString = "";
 
   while (Serial.available()) {
     char inChar = (char)Serial.read();
-
-    // Når "enter" trykkes, leses inn strengen
+    // Leses inn når enter trykkes:
     if (inChar == '\n') {
       inputString.trim();
-
-      // Sjekker om input er gyldig:
+      // Gyldig inputt?:
       if (inputString == "u1" || 
           inputString == "u2" || 
           inputString == "d2" || 
-          inputString == "3d" || 
-          (inputString.toInt() > 0 && inputString.toInt() <= 3)) 
-      {
+          inputString == "d3" || 
+          (inputString.toInt() > 0 && inputString.toInt() <= 3)) {
         Serial.print("Command received: ");
         Serial.println(inputString);
         queue(inputString);
+        lastActivityTime = millis();
       } 
-      else 
-      {
+      else {
         Serial.println("Invalid command.");
       }
-
-      // Nulstiller stringen, sjekker for carriage return
+      // Nuller ut sting:
       inputString = "";
     } 
     else if (inChar != '\r') {
@@ -97,30 +46,20 @@ bool isQueueEmpty(int queue[], int size) {
   return true;
 }
 
-
 void direction() {
     bool upEmpty = isQueueEmpty(queueUpArray, numFloor);
     bool downEmpty = isQueueEmpty(queueDownArray, numFloor);
-    
-    // Sett noQueue basert på om begge køene er tomme
     noQueue = upEmpty && downEmpty;
-
-    if(noQueue){
-      lastActivityTime = millis();
-    }
-    else if (upEmpty) {
-        // Bare ned-køen har elementer, sett retning nedover
+    
+    // Kø ned ikke tom:
+    if (upEmpty) {
         dir = false;
-    } else if (downEmpty) {
-        // Bare opp-køen har elementer, sett retning oppover
-        dir = true;
-    } else {
-        // Begge køene har elementer, beholder den nåværende retningen.
-        // Ingen kode nødvendig her siden vi ikke endrer 'dir' når begge køene har elementer.
     }
-    moveElevator();
-}
-
+    // Kø opp ikke tom: 
+    else if (downEmpty) {
+        dir = true;
+    } 
+  }
 
 void queueUp(int floor) {
   for (int i = 0; i < numFloor; i++) {
@@ -151,38 +90,23 @@ void queueDown(int floor) {
   }
 }
 
-
-void removeFromQueueUp(){
-  if (queueUpArray[0] == 0) {
+void removeFromQueue(int queueArrey[]){
+  if (queueArrey[0] == 0) {
     return;
   }
   else{
   for (int i = 0; i < numFloor - 1; i++) {
-    queueUpArray[i] = queueUpArray[i + 1];
+    queueArrey[i] = queueArrey[i + 1];
   }
-  queueUpArray[numFloor - 1] = 0;
-  }
-}
-
-void removeFromQueueDown(){
-    if (queueDownArray[0] == 0) {
-    return;
-  }
-  else{
-  for (int i = 0; i < numFloor - 1; i++) {
-    queueDownArray[i] = queueDownArray[i + 1];
-  }
-  queueDownArray[numFloor - 1] = 0;
+  queueArrey[numFloor - 1] = 0;
   }
 }
 
 void queue(String inputString){
-
 // Pressed at floor 1:
 if(inputString == "u1"){
   queueDown(1);
 }
-
 // Pressed at floor 2:
 if(inputString == "u2"){
   queueUp(2);
@@ -190,12 +114,10 @@ if(inputString == "u2"){
 if(inputString == "d2"){
   queueDown(2);
 }
-
 // Pressed at floor 3:
 if(inputString == "d3"){
   queueUp(3);
 }
-
 // Pressed inside elevator:
 if(inputString == "1" && current_Floor > 1){
 queueDown(1);
@@ -222,52 +144,59 @@ openDoor();
 
 void currentFloor(){
 int pos = motor.getPos();
-if(pos < 1010 && pos > 990){
+if(pos < 1005 && pos > 995){
   current_Floor = 1;
 }
-if(pos < 2010 && pos > 1990){
+if(pos < 2015 && pos > 1995){
   current_Floor = 2;
 }
-if(pos < 3010 && pos > 2990){
+if(pos < 3015 && pos > 2995){
   current_Floor = 3;
 }
 }
 
 void Idle(){
-  const unsigned long DOOR_CLOSE_DELAY = 30000;
+  const unsigned long DOOR_CLOSE_DELAY = 10000;
     if ((millis() - lastActivityTime) > DOOR_CLOSE_DELAY) {
     if(doorIsOpen){
     closeDoor();
-    }
     lastActivityTime = millis();
+    }
+    }
   }
-}
 
-
-//fiks her noe 
 void moveElevator() {
   if(!noQueue){
+    // Opp:
   if (dir == true) { 
     if(queueUpArray[0] != 0){
     int set = queueUpArray[0];
+    if(doorIsOpen){
+    closeDoor();
+    }
     pid.compute(set);
-    currentFloor();
+    motor.driveMotor(0);
     if (current_Floor == set) {
       if(!doorIsOpen){
       openDoor();
       }
-      removeFromQueueUp();
+      removeFromQueue(queueUpArray);
     }}
   } 
+  // Ned:
   else if (dir == false) {
     if(queueDownArray[0] != 0){
       int set = queueDownArray[0];
+      if(doorIsOpen){
+      closeDoor();
+      }
       pid.compute(set);
+      motor.driveMotor(0);
     if (current_Floor == set) {
       if(!doorIsOpen){
       openDoor();
       }
-      removeFromQueueDown();
+      removeFromQueue(queueDownArray);
     }}
   }
 }

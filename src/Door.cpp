@@ -8,6 +8,9 @@
 
 
 void openDoor() {
+
+  delay(1000);
+
   for(int i = 0; i < stepsPerRev/8; i++){ //halfstep
     digitalWrite(A, HIGH);  //STEP 1
     digitalWrite(A_phase, HIGH);
@@ -65,10 +68,13 @@ void openDoor() {
     delayMicroseconds (speed);
 
     doorIsOpen = true;
+    lastActivityTime = millis();
   }
 }
 
 void closeDoor() {
+
+  delay(1000);
 
   for(int i = 0; i < stepsPerRev/8; i++){
 
@@ -121,6 +127,7 @@ void closeDoor() {
     delayMicroseconds (speed);
 
     doorIsOpen = false;
+    lastActivityTime = millis();
   } 
 }
 

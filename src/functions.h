@@ -5,7 +5,6 @@
 #include "PID.h"
 #include "Door.h"
 
-void startElevator();
 void buttons();
 void queueUp(int floor);
 void queueDown(int floor);
@@ -14,8 +13,9 @@ bool isQueueEmpty(int queue[], int size);
 void direction();
 void currentFloor();
 void moveElevator();
-void removeFromQueueUp();
-void removeFromQueueDown();
+void removeFromQueue(int queueArrey[]);
+void Idle();
+
 
 
 

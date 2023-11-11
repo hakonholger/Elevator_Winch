@@ -18,6 +18,21 @@ PID pid(1, 0.001, 0.4, motor);
   int B = 67; 
   int B_phase = 66;
 
+  // Arrey for køsystem
+int queueUpArray[numFloor] = {0};
+int queueDownArray[numFloor] = {0};
+//starter i etasje 1
+int current_Floor = 1;
+unsigned long lastActivityTime = 0;
+
+// Bolsk verdi for retning av heis
+bool dir = true;
+bool noQueue = true;
+
+// for debug:
+unsigned long lastPrintTime = 0;
+
+  
 void setup() {
   Serial.begin(9600);
 
@@ -32,11 +47,49 @@ void setup() {
   set_dac(4095,4095);
 }
 
+
 void loop() { 
 
+  Idle();
+  buttons();
+  direction();
+  moveElevator();
+  currentFloor();
 
-startElevator();
 
+
+unsigned long currentTime = millis(); // Hent gjeldende tid
+  // Sjekk om det har gått 5 sekunder siden siste utskrift
+
+
+  //debug:
+  if (currentTime - lastPrintTime >= printInterval) {
+    lastPrintTime = currentTime; // Oppdater siste utskriftstidspunkt
+
+    // Print kø for oppover
+    Serial.print("Queue Up: ");
+    for (int i = 0; i < numFloor; i++) {
+      Serial.print(queueUpArray[i]);
+      Serial.print(" ");
+    }
+    Serial.println(); // Ny linje etter utskrift av kø
+
+    // Print kø for nedover
+    Serial.print("Queue Down: ");
+    for (int i = 0; i < numFloor; i++) {
+      Serial.print(queueDownArray[i]);
+      Serial.print(" ");
+    }
+    Serial.println(); // Ny linje etter utskrift av kø
+    Serial.print("Current Floor: "); Serial.println(current_Floor);
+  
+    if(doorIsOpen){
+      Serial.println("Door is Open!");
+    }
+    if(!doorIsOpen){
+      Serial.println("Door is Closed!");
+    }
+  }
 
 }
 
