@@ -8,7 +8,7 @@
 
 
 void openDoor() {
-
+halfOpen = true;
   delay(1000);
 
   for(int i = 0; i < stepsPerRev/8; i++){ //halfstep
@@ -69,11 +69,12 @@ void openDoor() {
 
     doorIsOpen = true;
     lastActivityTime = millis();
+    halfOpen = false;
   }
 }
 
 void closeDoor() {
-
+  halfOpen = true;
   delay(1000);
 
   for(int i = 0; i < stepsPerRev/8; i++){
@@ -128,9 +129,6 @@ void closeDoor() {
 
     doorIsOpen = false;
     lastActivityTime = millis();
+    halfOpen = true;
   } 
-}
-
-void halfDoor(){
-  
 }

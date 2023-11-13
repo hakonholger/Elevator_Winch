@@ -184,8 +184,8 @@ void moveElevator() {
     closeDoor();
     }
     pid.compute(set);
-    motor.driveMotor(0);
     if (current_Floor == set) {
+      motor.driveMotor(0);
       if(!doorIsOpen){
       openDoor();
       }
@@ -200,8 +200,8 @@ void moveElevator() {
       closeDoor();
       }
       pid.compute(set);
-      motor.driveMotor(0);
     if (current_Floor == set) {
+      motor.driveMotor(0);
       if(!doorIsOpen){
       openDoor();
       }

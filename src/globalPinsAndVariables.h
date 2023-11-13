@@ -31,6 +31,7 @@ extern unsigned long lastActivityTime;
 // Bolsk verdi for retning av heis
 extern bool dir;
 extern bool noQueue;
+bool halfOpen = false;
 
 // for debug:
 extern unsigned long lastPrintTime;
