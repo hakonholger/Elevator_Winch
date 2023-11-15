@@ -16,6 +16,10 @@ void moveElevator();
 void removeFromQueue(int queueArrey[]);
 void Idle();
 void setLed();
+void liquidCrystal();
+void windingLCD();
+void unwindingLCD();
+
 
 
 

@@ -7,10 +7,14 @@
 #include "Door.h"
 #include "globalPinsAndVariables.h"
 #include "dac.h"
+#include <LiquidCrystal.h>
 
-
+// Deklarerer PID og motor 
 MotorDriver motor(7, 6, 5, 20, 21);
 PID pid(1, 0.001, 0.4, motor);
+
+  // LCD deklarasjon
+LiquidCrystal lcd(41, 40, 37, 36, 35, 34);
 
   // Define pins for stepper
   int A = 69; 
@@ -31,7 +35,9 @@ unsigned long lastActivityTime = 0;
 
 // Bolsk verdi for retning av heis
 bool dir = true;
+bool halfOpen = false;
 bool noQueue = true;
+bool moveing = false;
 
 // for debug:
 unsigned long lastPrintTime = 0;
@@ -39,8 +45,12 @@ unsigned long lastPrintTime = 0;
   
 void setup() {
   Serial.begin(9600);
+  
+  // LCD
+  pinMode(4, OUTPUT);
+  digitalWrite(4, HIGH);
+  lcd.begin(16, 2);
 
-    // Output Pins
   // DC motor
   pinMode(A, OUTPUT);
   pinMode(B, OUTPUT);
@@ -58,11 +68,6 @@ void setup() {
 
 
 void loop() { 
-
-  // Fiks PID.cpp Serial print / delay????
-
-
-
 
   /* Idle, lukker dører etter satt tid
    og blir stående i samme etasje som sist kommando. */
@@ -88,6 +93,9 @@ void loop() {
   heisen befinner seg i. */
   setLed();
 
+  /* liquidCrystal printer etasje og kø opp og ned i LCD 
+  displayet.*/
+  liquidCrystal();
 
 
 
@@ -127,7 +135,8 @@ unsigned long currentTime = millis();
     if(!doorIsOpen){
       Serial.println("Door is Closed!");
     }
-  }
+  } 
+  
 
 }
 

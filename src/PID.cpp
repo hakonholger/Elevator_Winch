@@ -25,7 +25,7 @@ void PID::compute(double setPoint) {
     
     previous_time = current_time;
     
-    double e = setPoint*1000 - actualPosition;
+    double e = setPoint*2000*5 - actualPosition;
     double e_der = (e - e_previous)/dt;
     e_int += e * dt;
 
@@ -39,14 +39,14 @@ void PID::compute(double setPoint) {
     e_previous = e;
 
     // Setter maks PWM til 50, så motor ikke går så fort...
-      if (u < -50) {
-    u = -50;
-    } else if (u > 50) {
-    u = 50;
+      if (u < -255) {
+    u = -255;
+    } else if (u > 255) {
+    u = 255;
     }
 
     motor.driveMotor(u);
   // delay(20);
-   // Serial.print(actualPosition); Serial.print("  Set: "); Serial.println(setPoint*1000);
+    Serial.print(actualPosition); Serial.print("  Set: "); Serial.println(setPoint*2000*5);
    //Serial.println(dt);
 }

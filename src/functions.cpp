@@ -1,8 +1,10 @@
+#include <LiquidCrystal.h>
 #include "functions.h"
 #include "PID.h"
 #include "MotorDriver.h"
 #include "globalPinsAndVariables.h"
 #include "Door.h"
+
 
 
 void buttons(){
@@ -37,6 +39,7 @@ void buttons(){
   }
 }
 
+
 bool isQueueEmpty(int queue[], int size) {
   for (int i = 0; i < size; i++) {
     if (queue[i] != 0) {
@@ -45,6 +48,7 @@ bool isQueueEmpty(int queue[], int size) {
   }
   return true;
 }
+
 
 void direction() {
     bool upEmpty = isQueueEmpty(queueUpArray, numFloor);
@@ -60,6 +64,7 @@ void direction() {
         dir = true;
     } 
   }
+
 
 void queueUp(int floor) {
   for (int i = 0; i < numFloor; i++) {
@@ -78,6 +83,7 @@ void queueUp(int floor) {
   }
 }
 
+
 void queueDown(int floor) {
   for (int i = 0; i < numFloor; i++) {
     if (floor == queueDownArray[i]) { 
@@ -93,6 +99,7 @@ void queueDown(int floor) {
   }
 }
 
+
 void removeFromQueue(int queueArrey[]){
   if (queueArrey[0] == 0) {
     return;
@@ -104,6 +111,7 @@ void removeFromQueue(int queueArrey[]){
   queueArrey[numFloor - 1] = 0;
   }
 }
+
 
 void queue(String inputString){
 // Knapp på etasje 1:
@@ -126,7 +134,7 @@ if(inputString == "1" && current_Floor > 1){
 queueDown(1);
 }
 if(inputString == "1" && current_Floor == 1){
-  if(!doorIsOpen){
+  if(!doorIsOpen && noQueue){
   openDoor();
   }
 }
@@ -137,7 +145,7 @@ if(inputString == "2" && current_Floor > 2){
 queueDown(2);
 }
 if(inputString == "2" && current_Floor == 2){
-  if(!doorIsOpen){
+  if(!doorIsOpen && noQueue){
   openDoor();
   }
 }
@@ -145,27 +153,41 @@ if(inputString == "3" && current_Floor < 3){
 queueUp(3);
 }
 if(inputString == "3" && current_Floor == 3){
-  if(!doorIsOpen){
+  if(!doorIsOpen && noQueue){
   openDoor();
   }
 }
 }
 
+
+
+// UTENFOR INTERVALL!!! SJEKK
 void currentFloor(){
 int pos = motor.getPos();
-if(pos < 1005 && pos > 995){
+if(pos < 1*2000*5+5 && pos > 1*2000*5-5){
   current_Floor = 1;
+  moveing = false;
 }
-if(pos < 2015 && pos > 1995){
+else if(pos < 2*2000*5+5 && pos > 2*2000*5-5){
   current_Floor = 2;
+  moveing = false;
+  Serial.println(moveing);
 }
-if(pos < 3015 && pos > 2995){
+else if(pos < 3*2000*5+5 && pos > 3*2000*5-5){
   current_Floor = 3;
+  moveing = false;
+}
+else{
+  moveing = true;
 }
 }
 
-void Idle(){
-  const unsigned long DOOR_CLOSE_DELAY = 10000;
+
+
+void  Idle(){
+  // Setter idle til 2 minutter etter siste activitet.
+  const unsigned long DOOR_CLOSE_DELAY = 60000*2;
+
     if ((millis() - lastActivityTime) > DOOR_CLOSE_DELAY) {
     if(doorIsOpen){
     closeDoor();
@@ -173,6 +195,7 @@ void Idle(){
     }
     }
   }
+
 
 void moveElevator() {
   if(!noQueue){
@@ -183,6 +206,7 @@ void moveElevator() {
     if(doorIsOpen){
     closeDoor();
     }
+    windingLCD();
     pid.compute(set);
     if (current_Floor == set) {
       motor.driveMotor(0);
@@ -199,6 +223,7 @@ void moveElevator() {
       if(doorIsOpen){
       closeDoor();
       }
+      unwindingLCD();
       pid.compute(set);
     if (current_Floor == set) {
       motor.driveMotor(0);
@@ -210,6 +235,7 @@ void moveElevator() {
   }
 }
 }
+
 
 void setLed(){
   digitalWrite(led1, 0);
@@ -227,4 +253,98 @@ switch(current_Floor){
     digitalWrite(led3, 1);
     break;
 }
+}
+
+
+void liquidCrystal(){
+  if(moveing == false){
+switch(current_Floor){
+  case 1:
+    lcd.clear();
+    lcd.print("Floor: 1");
+    /*
+    lcd.setCursor(0, 2); 
+    lcd.print("UP[   ]");
+    lcd.setCursor(3, 2);
+    lcd.print(queueUpArray[0]);
+    lcd.setCursor(4, 2);
+    lcd.print(queueUpArray[1]);
+    lcd.setCursor(5, 2);
+    lcd.print(queueUpArray[2]);
+    lcd.setCursor(7, 2);
+    lcd.print("DOWN[   ]");
+    lcd.setCursor(12, 2);
+    lcd.print(queueDownArray[0]);
+    lcd.setCursor(13, 2);
+    lcd.print(queueDownArray[1]);
+    lcd.setCursor(14, 2);
+    lcd.print(queueDownArray[2]);
+    lcd.setCursor(15, 2);
+    */
+    delay(20);
+    break;
+  case 2:
+    lcd.clear();
+    lcd.print("Floor: 2");
+    /*
+    lcd.setCursor(0, 2); 
+    lcd.print("UP[   ]");
+    lcd.setCursor(3, 2);
+    lcd.print(queueUpArray[0]);
+    lcd.setCursor(4, 2);
+    lcd.print(queueUpArray[1]);
+    lcd.setCursor(5, 2);
+    lcd.print(queueUpArray[2]);
+    lcd.setCursor(7, 2);
+    lcd.print("DOWN[   ]");
+    lcd.setCursor(12, 2);
+    lcd.print(queueDownArray[0]);
+    lcd.setCursor(13, 2);
+    lcd.print(queueDownArray[1]);
+    lcd.setCursor(14, 2);
+    lcd.print(queueDownArray[2]);
+    lcd.setCursor(15, 2);
+    */
+    delay(20);
+    break;
+  case 3:
+    lcd.clear();
+    lcd.print("Floor: 3");
+    /*
+    lcd.setCursor(0, 2); 
+    lcd.print("UP[   ]");
+    lcd.setCursor(3, 2);
+    lcd.print(queueUpArray[0]);
+    lcd.setCursor(4, 2);
+    lcd.print(queueUpArray[1]);
+    lcd.setCursor(5, 2);
+    lcd.print(queueUpArray[2]);
+    lcd.setCursor(7, 2);
+    lcd.print("DOWN[   ]");
+    lcd.setCursor(12, 2);
+    lcd.print(queueDownArray[0]);
+    lcd.setCursor(13, 2);
+    lcd.print(queueDownArray[1]);
+    lcd.setCursor(14, 2);
+    lcd.print(queueDownArray[2]);
+    lcd.setCursor(15, 2);
+    */
+    delay(20);
+    break;
+    }
+  }
+}
+
+void windingLCD(){
+if(moveing){
+lcd.clear();
+lcd.print("Winding");
+  }
+}
+
+void unwindingLCD(){
+if(moveing){
+lcd.clear();
+lcd.print("Unwinding");
+  }
 }

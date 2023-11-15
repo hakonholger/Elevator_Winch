@@ -1,8 +1,9 @@
 #ifndef globalPinsAndVariables_h
 #define globalPinsAndVariables_h
 
-#include"PID.h"
-#include"MotorDriver.h"
+#include "PID.h"
+#include "MotorDriver.h"
+#include <LiquidCrystal.h>
 
 // Stepper:
 extern int A;
@@ -17,6 +18,7 @@ extern int led3;
 
 extern PID pid;
 extern MotorDriver motor;
+extern LiquidCrystal lcd;
 
 extern bool doorIsOpen;
 
@@ -31,7 +33,8 @@ extern unsigned long lastActivityTime;
 // Bolsk verdi for retning av heis
 extern bool dir;
 extern bool noQueue;
-bool halfOpen = false;
+extern bool halfOpen;
+extern bool moveing;
 
 // for debug:
 extern unsigned long lastPrintTime;
