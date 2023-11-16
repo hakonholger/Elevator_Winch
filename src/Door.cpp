@@ -1,3 +1,10 @@
+//************************************************************************************************
+// The algorithm for the stepper motor driving is a modified version of the example code provided
+// on canvas for running the stepper motor through the enable/phase mode stepper driver
+//************************************************************************************************
+
+
+
 #include "Door.h"
 #include "globalPinsAndVariables.h"
 #include <dac.h>

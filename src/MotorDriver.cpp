@@ -18,6 +18,8 @@ MotorDriver::MotorDriver(int pwmPin, int phasePin, int decayPin, int encaPin, in
   attachInterrupt(digitalPinToInterrupt(_encaPin), MotorDriver::readEncoder, RISING);
 }
 
+//This void function checks whether the speed variable is positive, negative or zero. It will send the raw speed value to
+//the PWM pin, and setting the correct combination for direction pins.
 void MotorDriver::driveMotor(int speed) {
   if (speed > 0) {
     analogWrite(_pwmPin, speed);
@@ -37,6 +39,10 @@ void MotorDriver::driveMotor(int speed) {
 int MotorDriver::getPos() {
   return pos;
 }
+
+//The readEncoder function checks whether encoder pin B are high once encoder pin A are on rising edge to determine
+//if the direction is positive or negative. If B is high, it means that the direction is positive. If B is low
+//once A is on rising edge, it means negative direction.
 
 void MotorDriver::readEncoder() {
   int ENCB = 21;
